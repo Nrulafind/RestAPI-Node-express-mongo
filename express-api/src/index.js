@@ -16,6 +16,24 @@ app.use(bodyParser.json());
 app.use(cors());
 app.use(morgan('combined'));
 
+checkJwt = jwt({
+    secret: jwksRsa.expressJwtSecret({
+        cache: true,
+        rateLimit: true,
+        jwksRequestsPerMinute: 5,
+        jwksUri: `https://dev-sr45l575l8055q84.auth0.com/.well-known/jwks.json`
+    }),
+
+    // Validate the audience and the issuer.
+    audience: 'https://dev-sr45l575l8055q84.us.auth0.com/api/v2/',
+    issuer: `https://dev-sr45l575l8055q84.auth0.com/`,
+    algorithms: ['RS256']
+});
+
+
+
+app.use(checkJwt);
+
 app.get('/', async (req, res) => {
     res.send(await getAds());
 });
